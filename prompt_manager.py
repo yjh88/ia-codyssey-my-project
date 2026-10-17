@@ -55,3 +55,45 @@ def get_default_prompts() -> list[dict]:
 def display_header(title: str):
     """표준 섹션 헤더 출력"""
     print(f"\n{'=' * 10} {title} {'=' * 10}")
+
+
+def show_menu():
+    """메인 메뉴 UI 출력"""
+    print("\n=== 나만의 프롬프트 관리 ===")
+    print("1. 프롬프트 추가")
+    print("2. 프롬프트 목록")
+    print("3. 카테고리별 조회")
+    print("4. 프롬프트 검색")
+    print("5. 프롬프트 상세 보기")
+    print("6. 즐겨찾기 관리")
+    print("7. 즐겨찾기 목록")
+    print("0. 종료")
+
+def main():
+    prompts = get_default_prompts()
+    print("✨ 나만의 프롬프트 관리 프로그램에 오신 것을 환영합니다!")
+    while True:
+        show_menu()
+        choice = input("선택: ").strip()
+        if choice == "0":
+            print("\n프로그램을 종료합니다. 즐거운 생성형 AI 여정이 되시길 바랍니다! 👋")
+            break
+        elif choice == "1":
+            print("\n[안내] 프롬프트 추가 기능 준비 중입니다.")
+        elif choice == "2":
+            print("\n[안내] 프롬프트 목록 기능 준비 중입니다.")
+        elif choice == "3":
+            print("\n[안내] 카테고리별 조회 기능 준비 중입니다.")
+        elif choice == "4":
+            print("\n[안내] 프롬프트 검색 기능 준비 중입니다.")
+        elif choice == "5":
+            print("\n[안내] 프롬프트 상세 보기 기능 준비 중입니다.")
+        elif choice == "6":
+            print("\n[안내] 즐겨찾기 관리 기능 준비 중입니다.")
+        elif choice == "7":
+            print("\n[안내] 즐겨찾기 목록 기능 준비 중입니다.")
+        else:
+            print("\n⚠️ 잘못된 번호입니다. 메뉴에 있는 번호(0~7)를 입력해주세요.")
+
+if __name__ == "__main__":
+    main()
