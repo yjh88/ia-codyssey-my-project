@@ -114,6 +114,21 @@ def add_prompt(prompts: list[dict]):
     print("\n✅ 프롬프트가 추가되었습니다!")
 
 
+
+def show_list(prompts: list[dict]):
+    """저장된 모든 프롬프트를 번호와 함께 출력"""
+    display_header("프롬프트 목록")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다. 먼저 프롬프트를 추가해주세요.")
+        return
+        
+    for idx, p in enumerate(prompts, 1):
+        fav_mark = " ⭐" if p.get("favorite") else ""
+        print(f"{idx}. [{p['category']}] {p['title']}{fav_mark}")
+        
+    print(f"\n총 {len(prompts)}개의 프롬프트")
+
+
 def show_menu():
     """메인 메뉴 UI 출력"""
     print("\n=== 나만의 프롬프트 관리 ===")
@@ -138,7 +153,7 @@ def main():
         elif choice == "1":
             add_prompt(prompts)
         elif choice == "2":
-            print("\n[안내] 프롬프트 목록 기능 준비 중입니다.")
+            show_list(prompts)
         elif choice == "3":
             print("\n[안내] 카테고리별 조회 기능 준비 중입니다.")
         elif choice == "4":
