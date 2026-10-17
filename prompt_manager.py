@@ -304,6 +304,64 @@ def export_to_markdown(prompts: list[dict], filepath: str = "prompts_export.md")
         print(f"\n⚠️ 내보내기 중 오류가 발생했습니다: {e}")
 
 
+
+def edit_prompt(prompts: list[dict]):
+    """기존 프롬프트의 제목, 내용, 카테고리 수정"""
+    display_header("프롬프트 수정")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+    num_str = input(f"수정할 번호 입력 (1~{len(prompts)}): ").strip()
+    if not num_str.isdigit() or not (1 <= int(num_str) <= len(prompts)):
+        print("⚠️ 유효하지 않은 번호입니다.")
+        return
+    target = prompts[int(num_str) - 1]
+    print(f"현재 제목: {target['title']}")
+    new_title = input("새 제목 (엔터 시 유지): ").strip()
+    if new_title:
+        target['title'] = new_title
+        
+    print(f"현재 내용: {target['content']}")
+    new_content = input("새 내용 (엔터 시 유지): ").strip()
+    if new_content:
+        target['content'] = new_content
+        
+    ch_cat = input(f"카테고리를 변경하시겠습니까? (현재: {target['category']}) (y/N): ").strip().lower()
+    if ch_cat == 'y':
+        target['category'] = select_category()
+        
+    print(f"\n✅ '{target['title']}' 프롬프트가 성공적으로 수정되었습니다!")
+
+def delete_prompt(prompts: list[dict]):
+    """프롬프트 삭제"""
+    display_header("프롬프트 삭제")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+    num_str = input(f"삭제할 번호 입력 (1~{len(prompts)}): ").strip()
+    if not num_str.isdigit() or not (1 <= int(num_str) <= len(prompts)):
+        print("⚠️ 유효하지 않은 번호입니다.")
+        return
+    target = prompts[int(num_str) - 1]
+    confirm = input(f"정말로 '{target['title']}' 프롬프트를 삭제하시겠습니까? (y/N): ").strip().lower()
+    if confirm == 'y':
+        removed = prompts.pop(int(num_str) - 1)
+        print(f"\n🗑️ '{removed['title']}' 프롬프트가 삭제되었습니다.")
+    else:
+        print("\n삭제가 취소되었습니다.")
+
+def show_top_prompts(prompts: list[dict], top_n: int = 5):
+    """조회수 기준 내림차순 정렬 인기 프롬프트 목록"""
+    display_header(f"인기 프롬프트 Top {top_n}")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+    sorted_prompts = sorted(prompts, key=lambda x: x.get("views", 0), reverse=True)
+    for idx, p in enumerate(sorted_prompts[:top_n], 1):
+        fav_mark = " ⭐" if p.get("favorite") else ""
+        print(f"{idx}. [{p['category']}] {p['title']} ({p.get('views', 0)}회 조회){fav_mark}")
+
+
 def show_menu():
     """메인 메뉴 UI 출력"""
     print("\n=== 나만의 프롬프트 관리 ===")
@@ -315,6 +373,7 @@ def show_menu():
     print("6. 즐겨찾기 관리")
     print("7. 즐겨찾기 목록")
     print("8. [보너스1] 데이터 영속화 & 마크다운 내보내기")
+    print("9. [보너스2] 프롬프트 관리(CRUD) & 통계")
     print("0. 종료")
 
 def main():
@@ -356,8 +415,22 @@ def main():
                 export_to_markdown(prompts)
             else:
                 print("잘못된 선택입니다.")
+        elif choice == "9":
+            display_header("프롬프트 관리(CRUD) & 통계")
+            print("1) 프롬프트 수정")
+            print("2) 프롬프트 삭제")
+            print("3) 인기 프롬프트 (조회수 Top 5)")
+            sub = input("선택: ").strip()
+            if sub == "1":
+                edit_prompt(prompts)
+            elif sub == "2":
+                delete_prompt(prompts)
+            elif sub == "3":
+                show_top_prompts(prompts)
+            else:
+                print("잘못된 선택입니다.")
         else:
-            print("\n⚠️ 잘못된 번호입니다. 메뉴에 있는 번호(0~8)를 입력해주세요.")
+            print("\n⚠️ 잘못된 번호입니다. 메뉴에 있는 번호(0~9)를 입력해주세요.")
 
 if __name__ == "__main__":
     main()
