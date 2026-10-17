@@ -182,6 +182,34 @@ def search_prompt(prompts: list[dict]):
     print(f"\n{len(matches)}개의 프롬프트를 찾았습니다.")
 
 
+
+def show_detail(prompts: list[dict]):
+    """프롬프트 번호를 입력받아 상세 내용 전체 출력 및 조회수 증가"""
+    display_header("프롬프트 상세 보기")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+        
+    num_str = input("번호 입력: ").strip()
+    if not num_str.isdigit() or not (1 <= int(num_str) <= len(prompts)):
+        print("⚠️ 잘못된 번호입니다. 올바른 프롬프트 번호를 입력해주세요.")
+        return
+        
+    target = prompts[int(num_str) - 1]
+    target["views"] = target.get("views", 0) + 1
+    fav_mark = "⭐" if target.get("favorite") else "미지정"
+    
+    print("────────────────────────────")
+    print(f"제목: {target['title']}")
+    print(f"카테고리: {target['category']}")
+    print(f"즐겨찾기: {fav_mark}")
+    print(f"조회수: {target['views']}회")
+    print("────────────────────────────")
+    print("내용:")
+    print(target["content"])
+    print("────────────────────────────")
+
+
 def show_menu():
     """메인 메뉴 UI 출력"""
     print("\n=== 나만의 프롬프트 관리 ===")
@@ -212,7 +240,7 @@ def main():
         elif choice == "4":
             search_prompt(prompts)
         elif choice == "5":
-            print("\n[안내] 프롬프트 상세 보기 기능 준비 중입니다.")
+            show_detail(prompts)
         elif choice == "6":
             print("\n[안내] 즐겨찾기 관리 기능 준비 중입니다.")
         elif choice == "7":
