@@ -57,6 +57,63 @@ def display_header(title: str):
     print(f"\n{'=' * 10} {title} {'=' * 10}")
 
 
+
+def select_category() -> str:
+    """카테고리 선택 또는 직접 입력 헬퍼"""
+    print("\n카테고리 선택:")
+    for idx, cat in enumerate(CATEGORIES, 1):
+        print(f"{idx}) {cat}")
+    print(f"{len(CATEGORIES) + 1}) 직접 입력")
+    
+    while True:
+        sel = input("선택: ").strip()
+        if sel.isdigit():
+            val = int(sel)
+            if 1 <= val <= len(CATEGORIES):
+                return CATEGORIES[val - 1]
+            elif val == len(CATEGORIES) + 1:
+                custom_cat = input("카테고리명 직접 입력: ").strip()
+                if custom_cat:
+                    return custom_cat
+                print("카테고리명이 비어있습니다. 다시 입력해주세요.")
+            else:
+                print("올바른 번호를 선택해주세요.")
+        else:
+            print("숫자를 입력해주세요.")
+
+
+
+def add_prompt(prompts: list[dict]):
+    """새로운 프롬프트 추가 (입력 유효성 검증 포함)"""
+    display_header("프롬프트 추가")
+    
+    while True:
+        title = input("제목: ").strip()
+        if title:
+            break
+        print("⚠️ 제목은 비어 있을 수 없습니다. 다시 입력해주세요.")
+        
+    while True:
+        content = input("내용: ").strip()
+        if content:
+            break
+        print("⚠️ 내용은 비어 있을 수 없습니다. 다시 입력해주세요.")
+        
+    category = select_category()
+    
+    new_id = max([p.get("id", 0) for p in prompts], default=0) + 1
+    new_prompt = {
+        "id": new_id,
+        "title": title,
+        "content": content,
+        "category": category,
+        "favorite": False,
+        "views": 0
+    }
+    prompts.append(new_prompt)
+    print("\n✅ 프롬프트가 추가되었습니다!")
+
+
 def show_menu():
     """메인 메뉴 UI 출력"""
     print("\n=== 나만의 프롬프트 관리 ===")
@@ -79,7 +136,7 @@ def main():
             print("\n프로그램을 종료합니다. 즐거운 생성형 AI 여정이 되시길 바랍니다! 👋")
             break
         elif choice == "1":
-            print("\n[안내] 프롬프트 추가 기능 준비 중입니다.")
+            add_prompt(prompts)
         elif choice == "2":
             print("\n[안내] 프롬프트 목록 기능 준비 중입니다.")
         elif choice == "3":
