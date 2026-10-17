@@ -242,6 +242,68 @@ def show_favorites(prompts: list[dict]):
     print(f"\n총 {len(favs)}개의 즐겨찾기")
 
 
+
+def save_prompts_to_json(prompts: list[dict], filepath: str = "prompts.json"):
+    """프롬프트 데이터를 JSON 파일로 저장"""
+    try:
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(prompts, f, ensure_ascii=False, indent=2)
+        print(f"\n💾 데이터가 '{filepath}' 파일에 안전하게 저장되었습니다.")
+    except Exception as e:
+        print(f"\n⚠️ 저장 중 오류가 발생했습니다: {e}")
+
+def load_prompts_from_json(filepath: str = "prompts.json") -> list[dict] | None:
+    """JSON 파일로부터 프롬프트 데이터 불러오기"""
+    if not os.path.exists(filepath):
+        print(f"\n⚠️ '{filepath}' 파일이 존재하지 않습니다.")
+        return None
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        print(f"\n📂 '{filepath}'에서 {len(data)}개의 프롬프트를 성공적으로 불러왔습니다.")
+        return data
+    except Exception as e:
+        print(f"\n⚠️ 불러오기 중 오류가 발생했습니다: {e}")
+        return None
+
+def export_to_markdown(prompts: list[dict], filepath: str = "prompts_export.md"):
+    """전체 프롬프트를 카테고리별 마크다운 문서로 내보내기"""
+    try:
+        grouped = {}
+        for p in prompts:
+            grouped.setdefault(p.get("category", "기타"), []).append(p)
+            
+        lines = [
+            "# 📚 생성형 AI 프롬프트 보관함",
+            "",
+            "> 나만의 검증된 AI 프롬프트를 체계적으로 기록한 문서입니다.",
+            f"> 총 프롬프트 수: {len(prompts)}개",
+            ""
+        ]
+        
+        for cat in CATEGORIES:
+            cat_prompts = grouped.get(cat, [])
+            if not cat_prompts:
+                continue
+            lines.append(f"## 📁 {cat}")
+            lines.append("")
+            for p in cat_prompts:
+                fav = "⭐ " if p.get("favorite") else ""
+                lines.append(f"### {fav}{p['title']}")
+                lines.append(f"- **카테고리**: `{p['category']}` | **조회수**: {p.get('views', 0)}회")
+                lines.append("- **프롬프트 내용**:")
+                lines.append("```text")
+                lines.append(p["content"])
+                lines.append("```")
+                lines.append("")
+                
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+        print(f"\n📄 마크다운 문서가 '{filepath}'(으)로 성공적으로 내보내졌습니다!")
+    except Exception as e:
+        print(f"\n⚠️ 내보내기 중 오류가 발생했습니다: {e}")
+
+
 def show_menu():
     """메인 메뉴 UI 출력"""
     print("\n=== 나만의 프롬프트 관리 ===")
@@ -252,6 +314,7 @@ def show_menu():
     print("5. 프롬프트 상세 보기")
     print("6. 즐겨찾기 관리")
     print("7. 즐겨찾기 목록")
+    print("8. [보너스1] 데이터 영속화 & 마크다운 내보내기")
     print("0. 종료")
 
 def main():
@@ -277,8 +340,24 @@ def main():
             toggle_favorite(prompts)
         elif choice == "7":
             show_favorites(prompts)
+        elif choice == "8":
+            display_header("데이터 영속화 및 내보내기")
+            print("1) JSON 파일로 저장 (prompts.json)")
+            print("2) JSON 파일에서 불러오기 (prompts.json)")
+            print("3) 카테고리별 Markdown 문서로 내보내기")
+            sub = input("선택: ").strip()
+            if sub == "1":
+                save_prompts_to_json(prompts)
+            elif sub == "2":
+                loaded = load_prompts_from_json()
+                if loaded is not None:
+                    prompts = loaded
+            elif sub == "3":
+                export_to_markdown(prompts)
+            else:
+                print("잘못된 선택입니다.")
         else:
-            print("\n⚠️ 잘못된 번호입니다. 메뉴에 있는 번호(0~7)를 입력해주세요.")
+            print("\n⚠️ 잘못된 번호입니다. 메뉴에 있는 번호(0~8)를 입력해주세요.")
 
 if __name__ == "__main__":
     main()
