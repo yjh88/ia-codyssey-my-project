@@ -156,6 +156,32 @@ def show_by_category(prompts: list[dict]):
     print(f"\n총 {len(filtered)}개의 프롬프트")
 
 
+
+def search_prompt(prompts: list[dict]):
+    """키워드로 제목 또는 내용 검색"""
+    display_header("프롬프트 검색")
+    query = input("검색어: ").strip()
+    if not query:
+        print("⚠️ 검색어를 입력해주세요.")
+        return
+        
+    matches = [
+        p for p in prompts 
+        if query.lower() in p.get("title", "").lower() or query.lower() in p.get("content", "").lower()
+    ]
+    
+    print("\n검색 결과:")
+    if not matches:
+        print(f"'{query}'에 대한 검색 결과가 없습니다.")
+        return
+        
+    for idx, p in enumerate(matches, 1):
+        fav_mark = " ⭐" if p.get("favorite") else ""
+        print(f"{idx}. [{p['category']}] {p['title']}{fav_mark}")
+        
+    print(f"\n{len(matches)}개의 프롬프트를 찾았습니다.")
+
+
 def show_menu():
     """메인 메뉴 UI 출력"""
     print("\n=== 나만의 프롬프트 관리 ===")
@@ -184,7 +210,7 @@ def main():
         elif choice == "3":
             show_by_category(prompts)
         elif choice == "4":
-            print("\n[안내] 프롬프트 검색 기능 준비 중입니다.")
+            search_prompt(prompts)
         elif choice == "5":
             print("\n[안내] 프롬프트 상세 보기 기능 준비 중입니다.")
         elif choice == "6":
