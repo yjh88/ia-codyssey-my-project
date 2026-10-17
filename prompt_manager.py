@@ -129,6 +129,33 @@ def show_list(prompts: list[dict]):
     print(f"\n총 {len(prompts)}개의 프롬프트")
 
 
+
+def show_by_category(prompts: list[dict]):
+    """카테고리별 프롬프트 필터링 및 조회"""
+    display_header("카테고리별 조회")
+    for idx, cat in enumerate(CATEGORIES, 1):
+        print(f"{idx}) {cat}")
+        
+    sel = input("선택: ").strip()
+    if not sel.isdigit() or not (1 <= int(sel) <= len(CATEGORIES)):
+        print("⚠️ 잘못된 카테고리 번호입니다.")
+        return
+        
+    chosen_cat = CATEGORIES[int(sel) - 1]
+    filtered = [p for p in prompts if p.get("category") == chosen_cat]
+    
+    print(f"\n[{chosen_cat}] 카테고리 프롬프트:")
+    if not filtered:
+        print("해당 카테고리에 등록된 프롬프트가 없습니다.")
+        return
+        
+    for idx, p in enumerate(filtered, 1):
+        fav_mark = " ⭐" if p.get("favorite") else ""
+        print(f"{idx}. {p['title']}{fav_mark}")
+        
+    print(f"\n총 {len(filtered)}개의 프롬프트")
+
+
 def show_menu():
     """메인 메뉴 UI 출력"""
     print("\n=== 나만의 프롬프트 관리 ===")
@@ -155,7 +182,7 @@ def main():
         elif choice == "2":
             show_list(prompts)
         elif choice == "3":
-            print("\n[안내] 카테고리별 조회 기능 준비 중입니다.")
+            show_by_category(prompts)
         elif choice == "4":
             print("\n[안내] 프롬프트 검색 기능 준비 중입니다.")
         elif choice == "5":
